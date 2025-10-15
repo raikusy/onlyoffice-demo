@@ -1,10 +1,9 @@
-import Editor from "@/components/editor";
-
+import ClientEditor from "@/components/ClientEditor";
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
-      <Editor />
+    <div className="h-screen">
+      <ClientEditor />
     </div>
   );
 }

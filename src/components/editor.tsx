@@ -19,33 +19,64 @@ function onLoadComponentError(errorCode: number, errorDescription: string) {
     case -3: // DocsAPI is not defined
       console.log(errorDescription);
       break;
+    default:
+      console.log(errorDescription);
+      break;
   }
 }
 
 export default function Editor() {
-  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  // const origin = typeof window !== "undefined" ? window.location.origin : "";
+  // const appBaseUrl = (process.env.NEXT_PUBLIC_APP_BASE_URL || origin).replace(
+  //   /\/$/,
+  //   "",
+  // );
+  const docServerUrl = (
+    process.env.NEXT_PUBLIC_ONLYOFFICE_DOCSERVER_URL || "http://localhost:8000/"
+  ).replace(/(?<!:)\/{0,1}$/u, "/");
+
+  const callbackUrl = `https://yupsis-onlyoffice.loca.lt/api/onlyoffice/callback`;
+
+  // const fileUrl = `http://192.168.0.195:3000/files/list-1.xlsx`;
+  const fileUrl = "https://yupsis-onlyoffice.loca.lt/files/list-1.xlsx";
+
+  console.log("docServerUrl", docServerUrl);
+  console.log("fileUrl", fileUrl);
+
+  console.log("callbackUrl", callbackUrl);
+
+  const filename = "list-1.xlsx";
+
+  const documentKey = `${filename}-${Date.now()}`; // Generate unique key
   return (
     <DocumentEditor
       id="docxEditor"
-      documentServerUrl="http://localhost:8080/"
+      documentServerUrl={docServerUrl}
       config={{
         document: {
           fileType: "xlsx",
-          key: "unique-file-key",
-          title: "CopList.xlsx",
-          url: `${origin}/files/CopList.xlsx`,
+          key: documentKey,
+          title: filename,
+          url: fileUrl,
+          // permissions: {
+          //   edit: true,
+          //   download: true,
+          //   comment: true,
+          //   review: true,
+          //   chat: false,
+          //   protect: false,
+          // },
         },
         documentType: "cell",
         editorConfig: {
-          callbackUrl: `${origin}/api/onlyoffice/callback`,
-          embedded: {
-            embedUrl: "/embed/spreadsheet",
-            toolbarDocked: "top",
-          },
+          callbackUrl: callbackUrl,
+          mode: "edit",
         },
       }}
       events_onDocumentReady={onDocumentReady}
       onLoadComponentError={onLoadComponentError}
+      height="100%"
+      width="100%"
     />
   );
 }
